@@ -15,7 +15,7 @@ ___INFO___
   "securityGroups": [],
   "displayName": "Root Domain",
   "description": "Current URL Root Domain value",
-  "categories": ["UTILITY"],
+  "categories": ["UTILITY"],  
   "containerContexts": [
     "WEB"
   ],
@@ -156,6 +156,85 @@ ___WEB_PERMISSIONS___
       ]
     },
     "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "logging",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "environments",
+          "value": {
+            "type": 1,
+            "string": "debug"
+          }
+        }
+      ]
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "access_globals",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "keys",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "__gtmRootDomain"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
   }
 ]
 
@@ -166,6 +245,9 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 // Custom Variable Template to grab the current domain root
 
 // Needed Libraries
+const setInWindow = require('setInWindow');
+const copyFromWindow = require('copyFromWindow'); 
+const log = require('logToConsole');
 const setCookie = require('setCookie');
 const getCookieValues = require('getCookieValues');
 const getUrl = require('getUrl');
@@ -174,7 +256,9 @@ const getUrl = require('getUrl');
 const testCookieName = 'gtmTestCookie';
 
 // The function where the magic happens
-const getRootDomain = function() {
+const getRootDomain = function() { 
+  const __gtmRootDomain = copyFromWindow('__gtmRootDomain');
+  if(__gtmRootDomain) return __gtmRootDomain;
   let domain = getUrl('host');
   const domParts = domain.split('.');       
   let rootDomain = null;
@@ -191,15 +275,18 @@ const getRootDomain = function() {
       'max-age': 1,
       'secure': true
     });
+    
     if(getCookieValues(testCookieName).length>0){
+	   setInWindow('__gtmRootDomain', rootDomain, true);      
        return rootDomain;      	   
     }
   }  
 };
+
 // Return a value
 return getRootDomain();
 
 
 ___NOTES___
 
-Created on 10/29/2019, 6:38:35 PM
+Created on 10/29/2019, 7:43:47 PM
