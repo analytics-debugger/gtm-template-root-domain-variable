@@ -17,3 +17,5 @@ documentation: "https://www.thyngster.com/google-tag-manager-custom-variable-gra
 versions:
   - sha: 08489957fc31ce2a1d55146a0dd145d189c10d9e
     changeNotes: Initial Version
+  - sha: a35b1361a22ef154f45c6cd4b6665e47b1f3a008
+    changeNotes: Fix to keep variable state.
